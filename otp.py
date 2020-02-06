@@ -21,12 +21,14 @@ def main(argv):
 
     parser.add_argument('-o', '--outputfile', help='name of the output text file')
 
-
     args = parser.parse_args()
-    if args.encrypt is not None:
+    if args.encrypt is True:
         encrypt_otp(args.text)
-    # elif args.decrypt is not None:
-    #     decrypt_otp(args.text, args.key)
+    elif args.decrypt is True:
+        if args.key is None:
+            parser.error("argument -k/--key is required")
+            exit()
+        decrypt_otp(args.text, args.key)
 
 def generate_key(length):
     key = [str(random.randint(0,1)) for x in range(length)]
@@ -46,6 +48,13 @@ def encrypt_otp(ptext):
     return
 
 def decrypt_otp(ctext, key):
+    ctext_bin = ctext
+    key_bin = key
+    res = binascii.unhexlify('%x' % int("0b"+xor_compare(ctext_bin,key_bin), 2))
+
+    print("Ciphertext:\t{}".format(ctext_bin))
+    print("Key:\t\t{}".format(key_bin))
+    print("Plaintext:\t{}".format(res))
     return
 
 if __name__ == "__main__":

@@ -3,7 +3,6 @@ import argparse
 import binascii
 import random
 
-
 def main(argv):
     # Define script description and the arugment list
     parser = argparse.ArgumentParser(description='Encrypt and decrypt a One-Time Pad Cipher.')
@@ -33,17 +32,29 @@ def main(argv):
             exit()
         decrypt_otp(args.text, args.key)
 
-# Generate a random binary key of size length
 def generate_key(length):
+    """
+    Return a randomly generated binary key of size length.
+
+    length - the length of the key to generate
+    """
     key = [str(random.randint(0,1)) for x in range(length)]
     return "".join(key)
 
-# Perform XOR comparision of two binary strings and return the result
-def xor_compare(text_bin, key_bin):
-    return '{0:0{1}b}'.format(int(text_bin,2) ^ int(key_bin, 2), len(text_bin))
+def xor_compare(bin1, bin2):
+    """
+    Return an XOR comparison of two binary strings.
 
-# Given a plaintext string, generate a random binary key and encrypt the plaintext as binary
+    bin1, bin2 - the binaries to compare
+    """
+    return '{0:0{1}b}'.format(int(bin1,2) ^ int(bin2, 2), len(bin1))
+
 def encrypt_otp(ptext):
+    """
+    Convert plaintext to its binary equivalent (without binary literal), get a random binary key, and perform XOR comparison.
+
+    ptext - the plaintext to encrypt
+    """
     ptext_bin = bin(int(binascii.hexlify(ptext), 16))[2:]
     key_bin = generate_key(len(ptext_bin))
     xor_bin = xor_compare(ptext_bin,key_bin)
@@ -53,8 +64,13 @@ def encrypt_otp(ptext):
     print("Ciphertext:\t{}".format(xor_bin))
     return
 
-# Given the ciphertext binary string and the binary key, decrypt and return the plaintext ASCII string
 def decrypt_otp(ctext, key):
+    """
+    Perform XOR comparison using provided ciphertext and key. Display the resultin ASCII.
+
+    ctext - the ciphertext in binary
+    key - the key in binary
+    """
     ctext_bin = ctext
     key_bin = key
     res = binascii.unhexlify('%x' % int("0b"+xor_compare(ctext_bin,key_bin), 2))

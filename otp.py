@@ -20,27 +20,67 @@ def main(argv):
     parser.add_argument('-o', '--outputfile', help='name of the output text file')
     args = parser.parse_args()
 
+
+    txt = ""
+    key = ""
+    res = ""
+
     # Handle different input functionality
-    pt = ""
     if args.text is not None:
-        pt = args.text
+        txt = args.text
     elif args.interactive is True:
-        pt = input("Enter plaintext: ")
+        txt = input("Enter text: ")
     elif args.file is not None:
-        pt = open(args.file, "r").read()
+        txt = open(args.file, "r").read()
 
     # Handle encryption or decryption logic
     if args.encrypt is True:
-        encrypt_otp(pt)
+        txt = string_to_binary(txt)
+        key = generate_binary_key(len(txt))
+        res = xor_compare(txt, key)
+        print("Key: {}".format(binary_to_hex(key)))
+        print("Ciphertext: {}".format(binary_to_hex(res)))
     elif args.decrypt is True:
         # Handle key input functionality
-        key = ""
         if args.interactive is True:
             key = input("Enter key: ")
         if args.key is None and not key:
             parser.error("argument -k/--key is required")
             exit()
-        decrypt_otp(pt, key)
+        res = binary_to_string("0b"+xor_compare(hex_to_binary(txt), hex_to_binary(key)))
+        print("Plaintext: {}".format(res))
+
+def string_to_binary(str):
+    """
+    Return a string converted binary.
+
+    str - the string to convert
+    """
+    return bin(int(binascii.hexlify(str.encode()), 16))[2:]
+
+def binary_to_string(bnry):
+    """
+    Return a binary converted string.
+
+    bnry - the binary to convert
+    """
+    return binascii.unhexlify('%x' % int(bnry, 2)).decode()
+
+def binary_to_hex(bnry):
+    """
+    Return a binary converted hex.
+
+    bnry - the binary to convert
+    """
+    return hex(int(bnry,2))[2:]
+
+def hex_to_binary(hexa):
+    """
+    Return a hex converted binary.
+
+    hexa - the hex to convert
+    """
+    return bin(int(hexa, 16)).zfill(8)
 
 def generate_binary_key(length):
     """
@@ -58,37 +98,6 @@ def xor_compare(bin1, bin2):
     bin1, bin2 - the binaries to compare
     """
     return '{0:0{1}b}'.format(int(bin1,2) ^ int(bin2, 2), len(bin1))
-
-def encrypt_otp(ptext):
-    """
-    Convert plaintext to its binary equivalent (without binary literal), get a random binary key, and perform XOR comparison.
-
-    ptext - the plaintext to encrypt
-    """
-    ptext_bin = bin(int(binascii.hexlify(ptext.encode()), 16))[2:]
-    key_bin = generate_binary_key(len(ptext_bin))
-    xor_bin = xor_compare(ptext_bin,key_bin)
-
-    print("Plaintext:\t{}".format(ptext_bin))
-    print("Key:\t\t{}".format(key_bin))
-    print("Ciphertext:\t{}".format(xor_bin))
-    return
-
-def decrypt_otp(ctext, key):
-    """
-    Perform XOR comparison using provided ciphertext and key. Display the result in Utf-8.
-
-    ctext - the ciphertext in binary
-    key - the key in binary
-    """
-    ctext_bin = ctext
-    key_bin = key
-    res = binascii.unhexlify('%x' % int("0b"+xor_compare(ctext_bin,key_bin), 2)).decode()
-
-    print("Ciphertext:\t{}".format(ctext_bin))
-    print("Key:\t\t{}".format(key_bin))
-    print("Plaintext:\t{}".format(res))
-    return
 
 if __name__ == "__main__":
     main(sys.argv[1:])

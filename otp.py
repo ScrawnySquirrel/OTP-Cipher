@@ -20,10 +20,13 @@ def main(argv):
     parser.add_argument('-o', '--outputfile', help='name of the output text file')
     args = parser.parse_args()
 
-
+    # Cipher variables
     txt = ""
     key = ""
     res = ""
+
+    if args.outputfile is not None:
+        out_file = open(args.outputfile, "w")
 
     # Handle different input functionality
     if args.text is not None:
@@ -37,18 +40,26 @@ def main(argv):
     if args.encrypt is True:
         txt = string_to_binary(txt)
         key = generate_binary_key(len(txt))
-        res = xor_compare(txt, key)
+        res = binary_to_hex(xor_compare(txt, key))
         print("Key: {}".format(binary_to_hex(key)))
-        print("Ciphertext: {}".format(binary_to_hex(res)))
+        print("Ciphertext: {}".format(res))
+        if not out_file.closed:
+            out_file.write(res)
     elif args.decrypt is True:
         # Handle key input functionality
-        if args.interactive is True:
-            key = input("Enter key: ")
         if args.key is None and not key:
             parser.error("argument -k/--key is required")
             exit()
+        elif args.key is not None:
+            key = args.key
+        elif args.interactive is True:
+            key = input("Enter key: ")
+        else:
+            exit()
         res = binary_to_string("0b"+xor_compare(hex_to_binary(txt), hex_to_binary(key)))
-        print("Plaintext: {}".format(res))
+        print("Plaintext: {}".format(res).rstrip())
+        if not out_file.closed:
+            out_file.write(res)
 
 def string_to_binary(str):
     """

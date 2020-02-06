@@ -12,6 +12,7 @@ def main(argv):
     mode.add_argument('-e', '--encrypt', help='encrypt a plaintext', action='store_true')
     mode.add_argument('-d', '--decrypt', help='decrypt a ciphertext', action='store_true')
 
+    # TODO: Implement interactive and input file functionality
     enc = parser.add_mutually_exclusive_group(required='-e' or '--encrypt' or '-d' or '--decrypt' in argv)
     enc.add_argument('-t', '--text', help='the plaintext to encrypt')
     enc.add_argument('-i', '--interactive', help='interactively provide the plaintext', action='store_true')
@@ -19,8 +20,10 @@ def main(argv):
 
     parser.add_argument('-k', '--key', help='the decryption key')
 
+    # TODO: Implemtn output file capability
     parser.add_argument('-o', '--outputfile', help='name of the output text file')
 
+    # Execute encryption or decryption logic
     args = parser.parse_args()
     if args.encrypt is True:
         encrypt_otp(args.text)
@@ -30,13 +33,16 @@ def main(argv):
             exit()
         decrypt_otp(args.text, args.key)
 
+# Generate a random binary key of size length
 def generate_key(length):
     key = [str(random.randint(0,1)) for x in range(length)]
     return "".join(key)
 
+# Perform XOR comparision of two binary strings and return the result
 def xor_compare(text_bin, key_bin):
     return '{0:0{1}b}'.format(int(text_bin,2) ^ int(key_bin, 2), len(text_bin))
 
+# Given a plaintext string, generate a random binary key and encrypt the plaintext as binary
 def encrypt_otp(ptext):
     ptext_bin = bin(int(binascii.hexlify(ptext), 16))[2:]
     key_bin = generate_key(len(ptext_bin))
@@ -47,6 +53,7 @@ def encrypt_otp(ptext):
     print("Ciphertext:\t{}".format(xor_bin))
     return
 
+# Given the ciphertext binary string and the binary key, decrypt and return the plaintext ASCII string
 def decrypt_otp(ctext, key):
     ctext_bin = ctext
     key_bin = key

@@ -22,7 +22,7 @@ def main(argv):
     # TODO: Implemtn output file capability
     parser.add_argument('-o', '--outputfile', help='name of the output text file')
 
-    # Execute encryption or decryption logic
+    # Handle encryption or decryption logic
     args = parser.parse_args()
     if args.encrypt is True:
         encrypt_otp(args.text)
@@ -32,7 +32,7 @@ def main(argv):
             exit()
         decrypt_otp(args.text, args.key)
 
-def generate_key(length):
+def generate_binary_key(length):
     """
     Return a randomly generated binary key of size length.
 
@@ -56,7 +56,7 @@ def encrypt_otp(ptext):
     ptext - the plaintext to encrypt
     """
     ptext_bin = bin(int(binascii.hexlify(ptext), 16))[2:]
-    key_bin = generate_key(len(ptext_bin))
+    key_bin = generate_binary_key(len(ptext_bin))
     xor_bin = xor_compare(ptext_bin,key_bin)
 
     print("Plaintext:\t{}".format(ptext_bin))

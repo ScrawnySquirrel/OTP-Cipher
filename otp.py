@@ -25,6 +25,7 @@ def main(argv):
     key = ""
     res = ""
 
+    # Output file
     if args.outputfile is not None:
         out_file = open(args.outputfile, "w")
 
@@ -43,7 +44,7 @@ def main(argv):
         res = binary_to_hex(xor_compare(txt, key))
         print("Key: {}".format(binary_to_hex(key)))
         print("Ciphertext: {}".format(res))
-        if not out_file.closed:
+        if args.outputfile is not None:
             out_file.write(res)
     elif args.decrypt is True:
         # Handle key input functionality
@@ -58,7 +59,7 @@ def main(argv):
             exit()
         res = binary_to_string("0b"+xor_compare(hex_to_binary(txt), hex_to_binary(key)))
         print("Plaintext: {}".format(res).rstrip())
-        if not out_file.closed:
+        if args.outputfile is not None:
             out_file.write(res)
 
 def string_to_binary(str):

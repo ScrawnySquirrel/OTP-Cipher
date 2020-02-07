@@ -48,14 +48,12 @@ def main(argv):
             out_file.write(res)
     elif args.decrypt is True:
         # Handle key input functionality
-        if args.key is None and not key:
-            parser.error("argument -k/--key is required")
-            exit()
-        elif args.key is not None:
+        if args.key is not None:
             key = args.key
         elif args.interactive is True:
             key = input("Enter key: ")
         else:
+            parser.error("argument -k/--key is required")
             exit()
         res = binary_to_string("0b"+xor_compare(hex_to_binary(txt), hex_to_binary(key)))
         print("Plaintext: {}".format(res).rstrip())

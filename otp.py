@@ -16,7 +16,6 @@ def main(argv):
     enc.add_argument('-i', '--interactive', help='interactively provide the plaintext', action='store_true')
     enc.add_argument('-f', '--file', help='name of the input file')
     parser.add_argument('-k', '--key', help='the decryption key')
-    # TODO: Implement output file capability
     parser.add_argument('-o', '--outputfile', help='name of the output text file')
     args = parser.parse_args()
 
@@ -42,10 +41,8 @@ def main(argv):
         txt = string_to_binary(txt)
         key = generate_binary_key(len(txt))
         res = binary_to_hex(xor_compare(txt, key))
-        print("Key: {}".format(binary_to_hex(key)))
-        print("Ciphertext: {}".format(res))
-        if args.outputfile is not None:
-            out_file.write(res)
+        output_fp("Key: {}".format(binary_to_hex(key)), out_file)
+        output_fp("Ciphertext: {}".format(res), out_file)
     elif args.decrypt is True:
         # Handle key input functionality
         if args.key is not None:
@@ -56,9 +53,7 @@ def main(argv):
             parser.error("argument -k/--key is required")
             exit()
         res = binary_to_string("0b"+xor_compare(hex_to_binary(txt), hex_to_binary(key)))
-        print("Plaintext: {}".format(res).rstrip())
-        if args.outputfile is not None:
-            out_file.write(res)
+        output_fp("Plaintext: {}".format(res).rstrip(), out_file)
 
 def string_to_binary(str):
     """
@@ -108,6 +103,23 @@ def xor_compare(bin1, bin2):
     bin1, bin2 - the binaries to compare
     """
     return '{0:0{1}b}'.format(int(bin1,2) ^ int(bin2, 2), len(bin1))
+
+def output_fp(msg, ofile = None, fp_out = False):
+    """
+    Print to standard out or to file.
+
+    msg - the messsage to output
+    ofile - file to output
+    fp_out - output to both
+    """
+    if ofile is None:
+        print(msg)
+    else:
+        ofile.write(msg + "\n")
+        if fp_out is True:
+            print(msg)
+    return
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])

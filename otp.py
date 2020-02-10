@@ -41,8 +41,8 @@ def main(argv):
         txt = string_to_binary(txt)
         key = generate_binary_key(len(txt))
         res = binary_to_hex(xor_compare(txt, key))
-        output_fp("Key: {}".format(binary_to_hex(key)), out_file)
-        output_fp("Ciphertext: {}".format(res), out_file)
+        output_fp("Key: {}".format(binary_to_hex(key)), out_file if args.outputfile is not None else None)
+        output_fp("Ciphertext: {}".format(res), out_file if args.outputfile is not None else None)
     elif args.decrypt is True:
         # Handle key input functionality
         if args.key is not None:
@@ -53,7 +53,7 @@ def main(argv):
             parser.error("argument -k/--key is required")
             exit()
         res = binary_to_string("0b"+xor_compare(hex_to_binary(txt), hex_to_binary(key)))
-        output_fp("Plaintext: {}".format(res).rstrip(), out_file)
+        output_fp("Plaintext: {}".format(res).rstrip(), out_file if args.outputfile is not None else None)
 
 def string_to_binary(str):
     """
@@ -119,7 +119,6 @@ def output_fp(msg, ofile = None, fp_out = False):
         if fp_out is True:
             print(msg)
     return
-
 
 if __name__ == "__main__":
     main(sys.argv[1:])

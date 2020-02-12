@@ -34,6 +34,9 @@ def main(argv):
         txt = args.text
     elif args.interactive is True:
         txt = input("Enter text: ")
+        if txt is "":
+            print("The plaintext can't be empty.")
+            exit()
     elif args.file is not None:
         txt = open(args.file, "r").read()
 
@@ -49,6 +52,9 @@ def main(argv):
             key = args.key
         elif args.interactive is True:
             key = input("Enter key: ")
+            if key is "":
+                print("The key can't be empty.")
+                exit()
         else:
             parser.error("argument -k/--key is required")
             exit()

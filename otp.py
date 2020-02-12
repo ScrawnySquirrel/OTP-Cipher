@@ -23,6 +23,7 @@ def main(argv):
     txt = ""
     key = ""
     res = ""
+    out_file = None
 
     # Output file
     if args.outputfile is not None:
@@ -38,11 +39,10 @@ def main(argv):
 
     # Handle encryption or decryption logic
     if args.encrypt is True:
-        txt = string_to_binary(txt)
-        key = generate_binary_key(len(txt))
-        res = binary_to_hex(xor_compare(txt, key))
-        output_fp("Key: {}".format(binary_to_hex(key)), out_file if args.outputfile is not None else None)
-        output_fp("Ciphertext: {}".format(res), out_file if args.outputfile is not None else None)
+        key = generate_binary_key(len(string_to_binary(txt)))
+        res = otp_encrypt(txt, key)
+        output_fp("Key: {}".format(binary_to_hex(key)), out_file)
+        output_fp("Ciphertext: {}".format(res, out_file))
     elif args.decrypt is True:
         # Handle key input functionality
         if args.key is not None:
@@ -52,8 +52,8 @@ def main(argv):
         else:
             parser.error("argument -k/--key is required")
             exit()
-        res = binary_to_string("0b"+xor_compare(hex_to_binary(txt), hex_to_binary(key)))
-        output_fp("Plaintext: {}".format(res).rstrip(), out_file if args.outputfile is not None else None)
+        res = otp_decrypt(txt, key)
+        output_fp("Plaintext: {}".format(res, out_file))
 
 def string_to_binary(str):
     """
@@ -119,6 +119,29 @@ def output_fp(msg, ofile = None, fp_out = False):
         if fp_out is True:
             print(msg)
     return
+
+def otp_encrypt(pt, key):
+    """
+    Encrypt the plaintext using the OTP cipher and a randomly generated key.
+    Take string and return encrypted hex.
+
+    pt - the plaintext
+    key - the encryption key
+    """
+    txt = string_to_binary(pt)
+    res = binary_to_hex(xor_compare(txt, key))
+    return res
+
+def otp_decrypt(ct, key):
+    """
+    Decrypt the ciphertext using the OTP cipher and the provided key.
+    Take encrypted hex and return string
+
+    ct - the ciphertext
+    key - the decryption key
+    """
+    res = binary_to_string("0b"+xor_compare(hex_to_binary(ct), hex_to_binary(key)))
+    return res
 
 if __name__ == "__main__":
     main(sys.argv[1:])

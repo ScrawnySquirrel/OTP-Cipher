@@ -45,7 +45,7 @@ def main(argv):
         key = generate_binary_key(len(string_to_binary(txt)))
         res = otp_encrypt(txt, key)
         output_fp("Key: {}".format(binary_to_hex(key)), out_file)
-        output_fp("Ciphertext: {}".format(res, out_file))
+        output_fp("Ciphertext: {}".format(res), out_file)
     elif args.decrypt is True:
         # Handle key input functionality
         if args.key is not None:

@@ -81,8 +81,6 @@ The `-o` argument allows the output of the program to be saved to a text file.
 python3 otp.py -e -t "hello world" -o output.txt
 ```
 
-## Running the tests
-
 ## Author
 
 **Gabriel Lee** - [ScrawnySquirrel](https://github.com/ScrawnySquirrel)
